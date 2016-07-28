@@ -28,16 +28,31 @@ class TestingUITests: XCTestCase {
     super.tearDown()
   }
   
-  func testExample() {
-    // Use recording to get started writing UI tests.
-    // Use XCTAssert and related functions to verify your tests produce the correct results.
-  }
   
   func testUpdatePercentageLabel() {
     
-    let t = myMainViewController.view
+    let app = XCUIApplication()
     
-    t.textFieldCost.text = "100"
-    t.sliderPercentage.value = 25
+    let sliderPercentage = app.sliders["50%"]
+    sliderPercentage.tap()
+    sliderPercentage.adjustToNormalizedSliderPosition(0.67)
+    
+    XCTAssert(app.staticTexts["@ 20%"].exists)
+  }
+  
+  func testComputeAlert() {
+    
+    let app = XCUIApplication()
+    
+    let textFieldCost = app.textFields["meal total"]
+    textFieldCost.tap()
+    textFieldCost.typeText("100")
+    
+    app.sliders["50%"].tap()
+    app.buttons["compute tip"].tap()
+    
+    XCTAssert(app.alerts["tip"].exists)
+    app.alerts["tip"].collectionViews.buttons["OK"].tap()
+    XCTAssertFalse(app.alerts["tip"].exists)
   }
 }
