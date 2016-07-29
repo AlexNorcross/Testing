@@ -40,6 +40,20 @@ class TestingUITests: XCTestCase {
     XCTAssert(app.staticTexts["@ 20%"].exists)
   }
   
+  func testComputeAlertError() {
+    
+    let app = XCUIApplication()
+    
+    app.buttons["compute tip"].tap()
+    
+    expectationForPredicate(NSPredicate(format: "exists == 1"), evaluatedWithObject: app.alerts["oops"], handler: nil)
+    waitForExpectationsWithTimeout(5, handler: nil)
+    
+    let alertOops = app.alerts["oops"]
+    alertOops.collectionViews.buttons["OK"].tap()
+    XCTAssertFalse(alertOops.exists)
+  }
+  
   func testComputeAlert() {
     
     let app = XCUIApplication()
@@ -48,11 +62,14 @@ class TestingUITests: XCTestCase {
     textFieldCost.tap()
     textFieldCost.typeText("100")
     
-    app.sliders["50%"].tap()
     app.buttons["compute tip"].tap()
-    
-    XCTAssert(app.alerts["tip"].exists)
-    app.alerts["tip"].collectionViews.buttons["OK"].tap()
-    XCTAssertFalse(app.alerts["tip"].exists)
+
+    expectationForPredicate(NSPredicate(format: "exists == 1"), evaluatedWithObject: app.alerts["tip"], handler: nil)
+    waitForExpectationsWithTimeout(5, handler: nil)
+
+    let alertTip = app.alerts["tip"]
+    XCTAssert(alertTip.exists)
+    alertTip.collectionViews.buttons["OK"].tap()
+    XCTAssertFalse(alertTip.exists)
   }
 }
